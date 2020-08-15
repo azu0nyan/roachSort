@@ -9,8 +9,9 @@ object Main extends App {
   val threads = 12
   val count = 25
   val rouchesPerBatch = 5
-
-
+  val maxi = 100000
+  val resultsEvery = 10000
+  
   def sort(roachPlaces: Seq[Roach], printLog: Boolean = false): (Int, RoachSorter) = {
     val sorter = new RoachSorter(count, rouchesPerBatch)
     var iter = 0
@@ -35,14 +36,14 @@ object Main extends App {
   @volatile var min = Integer.MAX_VALUE
   val sorts = new mutable.HashMap[Int,Int]()
   
-  var cur: AtomicInteger = new AtomicInteger(0)
+  var cur: AtomicInteger = new AtomicInteger(1)
   for (t <- 0 until threads) {
     new Thread(() => {
       while (true) {
         val i = cur.getAndIncrement()
         val roachPlaces = i match {
-          case 0 => (0 until count).toSeq
-          case 1 => (0 until count).toSeq.reverse
+          case 1 => (0 until count).toSeq
+          case 2 => (0 until count).toSeq.reverse
           case _ => new Random(i).shuffle((0 until count))
         }
         val (turns, rs) = sort(roachPlaces, false)
@@ -56,9 +57,9 @@ object Main extends App {
             case Some(value) => sorts(turns) = value + 1
             case None => sorts(turns) = 1 
           } 
-          if(i % 1000 == 0){
+          if(i % resultsEvery == 0){
             println(s"Results at $i ")
-            println(sorts.toSeq.sortBy(_._1).map{case (t, c) => f"$t%02d | $c"}.mkString("\n"))
+            println(sorts.toSeq.sortBy(_._1).map{case (t, c) => f"$t%02d | $c%10d | ${c / i.toDouble}%.5f"}.mkString("\n"))
           }
           if (turns > max) {
             max = turns

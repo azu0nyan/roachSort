@@ -50,8 +50,8 @@ object RoachSorter {
         val sorted: Seq[Roach] = if (ret.isEmpty)
           candidats.sortBy(implicit x => left.size + right.size)
         else {
-//          candidats.sortBy(x => (ret.map( r => if(left(r).contains(x) || right(r).contains(x)) 1 else 0 ).sum, left(x).size + right(x).size))
-          candidats.sortBy(x => ret.map( r => if(left(r).contains(x) || right(r).contains(x)) 1 else 0 ).sum)//if (ret.map(left(_)).contains(x) || ret.map(right(_)).contains(x)) 1 else 0)          
+          candidats.sortBy(x => (ret.map( r => if(left(r).contains(x) || right(r).contains(x)) 1 else 0 ).sum, left(x).size + right(x).size))
+//          candidats.sortBy(x => ret.map( r => if(left(r).contains(x) || right(r).contains(x)) 1 else 0 ).sum)//if (ret.map(left(_)).contains(x) || ret.map(right(_)).contains(x)) 1 else 0)          
         }
 //        println(candidats)
         candidats = sorted.tail
@@ -79,7 +79,7 @@ object RoachSorter {
       }
       unplaced.filter(isAllLRKnown).foreach(place)
 
-    def roachToSort: Seq[Roach] = new Random().shuffle(unplaced.toSeq).take(elementsPerBatch)
+    def roachToSort: Seq[Roach] = (unplaced.toSeq).take(elementsPerBatch)
 
     def allSorted: Boolean = unplaced.size == 0
 
