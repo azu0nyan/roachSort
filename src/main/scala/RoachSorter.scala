@@ -14,7 +14,7 @@ object RoachSorter {
         assert(!(left.contains(i)))
         assert(!(right.contains(i)))
         assert((left & right).size < rouchesTotal)
-        
+
         val inLeft:Set[Roach] = roaches.filter(left(_).contains(i)) .toSet
         val inRight:Set[Roach] = roaches.filter(right(_).contains(i)).toSet
         if(left != inRight) println(s"$i left : $left inRight: $inRight diff l\\r ${left &~ inRight} r\\l ${inRight &~ left}")
@@ -50,11 +50,12 @@ object RoachSorter {
         val sorted: Seq[Roach] = if (ret.isEmpty)
           candidats.sortBy(implicit x => left.size + right.size)
         else {
+//          candidats.sortBy(x => (ret.map( r => if(left(r).contains(x) || right(r).contains(x)) 1 else 0 ).sum, left(x).size + right(x).size))
           candidats.sortBy(x => ret.map( r => if(left(r).contains(x) || right(r).contains(x)) 1 else 0 ).sum)//if (ret.map(left(_)).contains(x) || ret.map(right(_)).contains(x)) 1 else 0)          
         }
 //        println(candidats)
-        candidats = sorted.tail 
-        ret += sorted.head        
+        candidats = sorted.tail
+        ret += sorted.head
       }
       ret.toSet
     }
@@ -74,7 +75,7 @@ object RoachSorter {
         for(rn <- right(rightmost))l(rn) += leftmost
         l(rightmost) ++= left(leftmost)
         for(ln <- left(leftmost))r(ln) += rightmost
-          
+
       }
       unplaced.filter(isAllLRKnown).foreach(place)
 
@@ -93,7 +94,7 @@ object RoachSorter {
       roaches.map { implicit x =>
         f"$x%02d | ${left.mkString(" ", " ", " ")} <<< $x <<< ${right.mkString(" ", " ", " ")}"
       }.mkString("\n")
-    
+
     def sorted:Seq[Roach] = roaches.sortBy(r => placing(r).getOrElse(-1))
 
   }

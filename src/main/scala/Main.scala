@@ -2,6 +2,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import RoachSorter._
 
+import scala.collection.mutable
 import scala.util.Random
 
 object Main extends App {
@@ -32,6 +33,8 @@ object Main extends App {
 
   @volatile var max = Integer.MIN_VALUE
   @volatile var min = Integer.MAX_VALUE
+  val sorts = new mutable.HashMap[Int,Int]()
+  
   var cur: AtomicInteger = new AtomicInteger(0)
   for (t <- 0 until threads) {
     new Thread(() => {
@@ -49,6 +52,14 @@ object Main extends App {
           println(s"sorting ${rs.sorted.mkString(" ")}")
         }
         this.synchronized {
+          sorts.get(turns) match {
+            case Some(value) => sorts(turns) = value + 1
+            case None => sorts(turns) = 1 
+          } 
+          if(i % 1000 == 0){
+            println(s"Results at $i ")
+            println(sorts.toSeq.sortBy(_._1).map{case (t, c) => f"$t%02d | $c"}.mkString("\n"))
+          }
           if (turns > max) {
             max = turns
             println(s"new max at seed ${i} $max")
