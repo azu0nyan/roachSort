@@ -46,7 +46,7 @@ object RoachSorter {
     def isAllLRKnown(implicit roach: Roach): Boolean = (left | right).size == rouchesTotal - 1
 
     def unplaced: Set[Roach]  = roachesSet.filter(!isPlaceKnown(_))
-    
+
     def place(implicit roach: Roach): Unit = placing(roach) = Some(left.size)
 
     def processComparasionResults(res: IndexedSeq[Roach]): Unit =
@@ -56,12 +56,19 @@ object RoachSorter {
       ) {
         val leftmost = res(i)
         val rightmost = res(j)
-        r(leftmost) += rightmost
+        val elementsAtRight = Set(rightmost) | r(rightmost)
+        val elementsAtLeft = Set(leftmost) | l(leftmost)
+        elementsAtLeft.foreach(r(_) ++= elementsAtRight)
+        elementsAtRight.foreach(l(_) ++= elementsAtLeft)
+        /*r(leftmost) += rightmost
         l(rightmost) += leftmost
         r(leftmost) ++= right(rightmost)
         for (rn <- right(rightmost)) l(rn) += leftmost
         l(rightmost) ++= left(leftmost)
-        for (ln <- left(leftmost)) r(ln) += rightmost
+        for (ln <- left(leftmost)) {
+          r(ln) += rightmost
+          
+        }*/
 
       }
       unplaced.filter(isAllLRKnown).foreach(place)

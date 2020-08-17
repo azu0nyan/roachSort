@@ -5,13 +5,13 @@ import java.util.concurrent.atomic.AtomicInteger
 import scala.collection.mutable
 import scala.util.Random
 import RoachSorter._
-import sorters.{FirstSorter, GreedySorter} 
+import sorters.{FirstSorter, GreedySorter, GreedySorter2} 
 
 object Main  {
   val threads = 12
   val count = 25
   val rouchesPerBatch = 5
-  val maxi = 100000
+  val maxi = 400
   val resultsEvery = 1
 
   def sort(roachPlaces: Seq[Roach], printLog: Boolean = false, sorter:RoachSorter, name:String): (Int, RoachSorter) = {
@@ -35,7 +35,7 @@ object Main  {
   
   def main(args: Array[String]): Unit = {
 //    sorters.nkIterator(25, 5).map(_.toSeq).foreach(println)
-    runTestsMultithreaded(() => new GreedySorter(count, rouchesPerBatch))
+    runTestsMultithreaded(() => new GreedySorter2(count, rouchesPerBatch))
 //    val arr = Array[Int](0, 1, 2)
 //    println(arr.toSeq)
 //    while(sorters.nextNK(arr, 25))println(arr.toSeq)    
